@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .header h1 {
+            font-size: 36px;
+            color: #333;
+        }
+        .header p {
+            font-size: 18px;
+            color: #555;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        input, select {
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #28a745;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .weather-info {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .weather-info h2 {
+            font-size: 32px;
+        }
+        .weather-info p {
+            font-size: 20px;
+        }
+        .weather-info img {
+            width: 100px;
+            height: 100px;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .background {
+            background-image: url('static/weather/{{ background }}');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            padding: 50px 0;
+        }
+    </style>
+</head>
+<body class="background">
+
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to My Weather App</h1>
+            <p>Plan your day with accurate weather information!</p>
+        </div>
+
+        <!-- Weather Form -->
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="city" placeholder="Enter city" required>
+            </div>
+            <div class="form-group">
+                <select name="unit">
+                    <option value="metric" {% if selected_unit == 'metric' %} selected {% endif %}>Celsius (°C)</option>
+                    <option value="imperial" {% if selected_unit == 'imperial' %} selected {% endif %}>Fahrenheit (°F)</option>
+                </select>
+            </div>
+            <button type="submit">Get Weather</button>
+        </form>
+
+        <!-- Error Message -->
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <!-- Weather Details -->
+        {% if weather %}
+            <div class="weather-info">
+                <h2>{{ weather.city }}</h2>
+                <h3>{{ weather.temperature }}{{ weather.unit_symbol }}</h3>
+                <p>{{ weather.description|title }}</p>
+                <p>Humidity: {{ weather.humidity }}%</p>
+                <p>Pressure: {{ weather.pressure }} hPa</p>
+                <p>Wind Speed: {{ weather.wind_speed }} m/s</p>
+                <p>Last Updated: {{ weather.updated_at }}</p>
+                <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="Weather Icon">
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
